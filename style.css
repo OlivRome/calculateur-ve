@@ -1,0 +1,78 @@
+/* 1. Configuration générale */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    display: flex;
+    flex-direction: column; /* Aligne le titre et la carte l'un sous l'autre */
+    align-items: center;    /* Centre horizontalement */
+    justify-content: center; 
+    min-height: 100vh;      /* Utilise toute la hauteur de l'écran */
+    margin: 0;
+}
+
+/* 2. Conteneur principal (La "carte" blanche) */
+main {
+    background: white;
+    padding: 30px;
+    border-radius: 12px; /* Bords arrondis */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Ombre portée légère */
+    width: 100%;
+    max-width: 450px;
+}
+
+/* 3. Titres */
+h1 {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    text-align: center;
+    border-bottom: 2px solid #3498db; /* Ligne bleue sous le titre */
+    padding-bottom: 10px;
+}
+
+/* 4. Formulaire et Saisie */
+div {
+    margin-bottom: 15px; /* Espace entre chaque champ */
+}
+
+label {
+    display: block; /* Force le label à être au-dessus de l'input */
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box; /* Évite que le padding ne fasse déborder l'input */
+}
+
+/* 5. Le Bouton */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #3498db; /* Bleu financier */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s; /* Animation fluide au survol */
+}
+
+button:hover {
+    background-color: #2980b9; /* Bleu plus foncé au survol */
+}
+
+/* 6. Zone de Résultat */
+#resultat-zone {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e8f4fd;
+    border-radius: 6px;
+    text-align: center;
+}
