@@ -2,28 +2,33 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Mon Premier Site</title>
+    <title>Méthodologie - Calculateur Ve</title>
     <link rel="stylesheet" href="style.css">
-
-    <nav>
-    <a href="index.html">Calculateur</a> | 
-    <a href="methodologie.html">Méthodologie</a>
-    </nav>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+    <nav>
+        <a href="index.html">Calculateur</a> | 
+        <a href="methodologie.html" class="active">Méthodologie</a>
+    </nav>
 
-<header>
-    <h1>Methodologie</h1>
-</header>
+    <main>
+        <section>
+            <h1>Méthodologie de Calcul</h1>
+            <p>Cet outil permet d'évaluer la valeur théorique d'acquisition d'une entreprise.</p>
+            
+            <h3>1. La Valeur d'Entreprise ($Ve$)</h3>
+            <p>La formule utilisée est : $$Ve = Cap + D - Tr$$</p>
+            <ul>
+                <li><strong>$Cap$ (Capitalisation)</strong> : Valeur de marché des fonds propres.</li>
+                <li><strong>$D$ (Dette)</strong> : Dettes financières brutes.</li>
+                <li><strong>$Tr$ (Trésorerie)</strong> : Liquidités disponibles.</li>
+            </ul>
 
-<main>
-    
-    Ceci est la methodologie!
-
-</main>
-
-<script src="script.js"></script>
-
+            <h3>2. Le Multiple de Valorisation</h3>
+            <p>Il est calculé en divisant la $Ve$ par l'Excédent Brut d'Exploitation ($EBITDA$) :</p>
+            <p style="text-align: center;"><strong>Ratio = $Ve$ / $EBITDA$</strong></p>
+        </section>
+    </main>
 </body>
 </html>

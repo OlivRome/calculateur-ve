@@ -1,4 +1,6 @@
-    const bouton = document.querySelector('button');
+let chartInstance = null; // Stocke le graphique pour pouvoir le détruire/recréer
+
+const bouton = document.querySelector('button');
 
     bouton.addEventListener('click', function() {
         // --- ÉTAPE A : RÉCUPÉRATION DES ÉLÉMENTS DU DOM ---
@@ -41,6 +43,35 @@
         
         // Affichage du Multiple avec 2 décimales après la virgule
         resultatMultiple.textContent = Multiple.toFixed(2);
+
+        // --- AJOUT DE LA SAUVEGARDE ICI ---
+        sauvegarderCalcul(Ve, Multiple);
+
+        // --- ÉTAPE F : MISE À JOUR DU GRAPHIQUE ---
+const ctx = document.getElementById('monGraphique').getContext('2d');
+
+// Si un graphique existe déjà, on le détruit pour éviter les superpositions
+if (chartInstance) { chartInstance.destroy(); }
+
+chartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Capitalisation', 'Dette'],
+        datasets: [{
+            data: [Cap, D],
+            backgroundColor: ['#3498db', '#e74c3c'], // Bleu et Rouge
+            hoverOffset: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+});
+
+        
     });
 
             document.getElementById('btn-reset').addEventListener('click', function() {
@@ -50,3 +81,42 @@
                 document.querySelector('strong').textContent = '... €';
                 document.getElementById('multiple-val').textContent = '...';
             });
+
+// 1. Fonction pour sauvegarder un calcul
+function sauvegarderCalcul(ve, multiple) {
+    // On récupère l'historique existant ou on crée un tableau vide
+    let historique = JSON.parse(localStorage.getItem('monHistorique')) || [];
+
+    // On crée l'entrée avec la date actuelle
+    const nouvelleEntree = {
+        date: new Date().toLocaleDateString('fr-FR'),
+        ve: ve.toLocaleString('fr-FR'),
+        multiple: multiple.toFixed(2)
+    };
+
+    // On ajoute au début du tableau et on limite aux 5 derniers
+    historique.unshift(nouvelleEntree);
+    historique = historique.slice(0, 5);
+
+    // On sauvegarde dans le localStorage (en texte JSON)
+    localStorage.setItem('monHistorique', JSON.stringify(historique));
+    
+    afficherHistorique();
+}
+
+// 2. Fonction pour afficher le tableau
+function afficherHistorique() {
+    const corpsTableau = document.querySelector('#tableau-historique tbody');
+    const historique = JSON.parse(localStorage.getItem('monHistorique')) || [];
+
+    corpsTableau.innerHTML = historique.map(entree => `
+        <tr>
+            <td>${entree.date}</td>
+            <td>${entree.ve} €</td>
+            <td>${entree.multiple} x</td>
+        </tr>
+    `).join('');
+}
+
+// Appeler afficherHistorique au chargement de la page pour voir les anciens calculs
+window.onload = afficherHistorique;

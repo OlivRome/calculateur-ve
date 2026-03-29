@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <title>Mon Premier Site</title>
     <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <nav>
     <a href="index.html">Calculateur</a> | 
     <a href="methodologie.html">Méthodologie</a>
     </nav>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 <body>
@@ -52,6 +55,26 @@
     <p>La $Ve$ est de : <strong>... €</strong></p>
     <p>Multiple de valorisation : <span id="multiple-val">...</span> x</p>
     </section>
+
+    <canvas id="monGraphique"></canvas>
+
+    
+    <section id="historique-zone" style="margin-top: 30px;">
+    <h3>Historique des Analyses</h3>
+    <table id="tableau-historique">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>$Ve$ (€)</th>
+                <th>Multiple</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+    </section>
+
+
 </main>
 
 <script src="script.js"></script>
