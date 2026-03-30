@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Mon Premier Site</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/src/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <nav>
@@ -61,6 +61,9 @@
     
     <section id="historique-zone" style="margin-top: 30px;">
     <h3>Historique des Analyses</h3>
+
+    <button type="button" id="btn-export" style="background-color: #27ae60; margin-bottom: 10px;">Exporter en Excel (CSV)</button>
+
     <table id="tableau-historique">
         <thead>
             <tr>
@@ -77,7 +80,7 @@
 
 </main>
 
-<script src="script.js"></script>
+<script type="module" src="/src/script.js"></script>
 
 </body>
 </html>

@@ -1,3 +1,5 @@
+import { supabase } from './supabaseClient.js'
+
 let chartInstance = null; // Stocke le graphique pour pouvoir le détruire/recréer
 
 const bouton = document.querySelector('button');
@@ -46,6 +48,10 @@ const bouton = document.querySelector('button');
 
         // --- AJOUT DE LA SAUVEGARDE ICI ---
         sauvegarderCalcul(Ve, Multiple);
+
+        // 3. NOUVEAU : On envoie vers le Cloud (Supabase)
+        // On utilise "await" car c'est une opération réseau qui prend un peu de temps
+        sauvegarderCalculBDD(Ve, Multiple, "Test Mac");
 
         // --- ÉTAPE F : MISE À JOUR DU GRAPHIQUE ---
 const ctx = document.getElementById('monGraphique').getContext('2d');
@@ -120,3 +126,60 @@ function afficherHistorique() {
 
 // Appeler afficherHistorique au chargement de la page pour voir les anciens calculs
 window.onload = afficherHistorique;
+
+document.getElementById('btn-export').addEventListener('click', function() {
+    // 1. Récupération des données depuis le localStorage
+    const historique = JSON.parse(localStorage.getItem('monHistorique')) || [];
+    
+    if (historique.length === 0) {
+        alert("Aucune donnée à exporter.");
+        return;
+    }
+
+    // 2. Création de l'en-tête du fichier CSV
+    let contenuCSV = "Date;Valeur Entreprise (EUR);Multiple EBITDA\n";
+
+    // 3. Ajout des lignes de données
+    historique.forEach(entree => {
+        // On nettoie les espaces insérés par toLocaleString pour Excel
+        const vePropre = entree.ve.replace(/\s/g, ''); 
+        contenuCSV += `${entree.date};${vePropre};${entree.multiple}\n`;
+    });
+
+    // 4. Création du fichier et déclenchement du téléchargement
+    const blob = new Blob([contenuCSV], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const lien = document.createElement("a");
+    
+    lien.setAttribute("href", url);
+    lien.setAttribute("download", "historique_analyses_financieres.csv");
+    lien.style.visibility = 'hidden';
+    
+    document.body.appendChild(lien);
+    lien.click();
+    document.body.removeChild(lien);
+});
+
+
+//Maintenant, modifions votre fonction de sauvegarde dans src/script.js pour qu'elle parle à la base de données PostgreSQL en plus du localStorage.
+
+
+
+async function sauvegarderCalculBDD(ve, multiple, label = "Anonyme") {
+    // On insère une ligne dans la table "Analyses" que vous avez créée
+    const { data, error } = await supabase
+        .from('Analyses')
+        .insert([
+            { 
+                ve_valeur: ve, 
+                multiple_valeur: multiple, 
+                label_entreprise: label 
+            }
+        ])
+
+    if (error) {
+        console.error("Erreur de sauvegarde BDD :", error.message)
+    } else {
+        console.log("Analyse sauvegardée avec succès dans le Cloud !")
+    }
+}
