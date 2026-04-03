@@ -1,16 +1,42 @@
 import { supabase } from './supabaseClient.js'
 
+// Variable globale pour stocker l'utilisateur connecté
+let sessionUtilisateur = null;
+
+// Écouteur en temps réel du changement d'état (Connexion / Déconnexion)
+supabase.auth.onAuthStateChange((event, session) => {
+    sessionUtilisateur = session;
+    const authZone = document.getElementById('auth-zone');
+    const loginForm = document.getElementById('login-form');
+    const userInfo = document.getElementById('user-info');
+    const userEmailSpan = document.getElementById('user-email');
+
+    if (session) {
+        // Utilisateur connecté
+        loginForm.style.display = 'none';
+        userInfo.style.display = 'block';
+        userEmailSpan.textContent = session.user.email;
+        afficherHistoriqueGlobal(); // Charger ses propres analyses
+    } else {
+        // Utilisateur déconnecté
+        loginForm.style.display = 'block';
+        userInfo.style.display = 'none';
+    }
+});
+
+
 let chartInstance = null; // Stocke le graphique pour pouvoir le détruire/recréer
 
-const bouton = document.querySelector('button');
+const bouton = document.getElementById('btn-calculer');
+//const bouton = document.querySelector('button');
 
-    bouton.addEventListener('click', function() {
+    bouton.addEventListener('click', async function() {
         // --- ÉTAPE A : RÉCUPÉRATION DES ÉLÉMENTS DU DOM ---
         const inputCap = document.getElementById('cap');
         const inputDette = document.getElementById('dette');
         const inputTreso = document.getElementById('treso');
         const inputEbitda = document.getElementById('ebitda'); // Nouveau champ
-        const resultatVe = document.querySelector('strong');
+        const resultatVe = document.getElementById('ve-valeur-finale');
         const resultatMultiple = document.getElementById('multiple-val'); // Nouveau champ
 
         // --- ÉTAPE B : CONVERSION EN NOMBRES (parseFloat) ---
@@ -51,7 +77,7 @@ const bouton = document.querySelector('button');
 
         // 3. NOUVEAU : On envoie vers le Cloud (Supabase)
         // On utilise "await" car c'est une opération réseau qui prend un peu de temps
-        sauvegarderCalculBDD(Ve, Multiple, "Test Mac");
+        await sauvegarderCalculBDD(Ve, Multiple);
 
         // --- ÉTAPE F : MISE À JOUR DU GRAPHIQUE ---
 const ctx = document.getElementById('monGraphique').getContext('2d');
@@ -183,21 +209,55 @@ document.getElementById('btn-export').addEventListener('click', function() {
 
 
 
-async function sauvegarderCalculBDD(ve, multiple, label = "Anonyme") {
-    // On insère une ligne dans la table "Analyses" que vous avez créée
+async function sauvegarderCalculBDD(ve, multiple) {
+    // Rigueur : On vérifie si une session existe avant d'envoyer
+    if (!sessionUtilisateur) {
+        alert("Vous devez être connecté pour sauvegarder dans le Cloud.");
+        return;
+    }
+
     const { data, error } = await supabase
         .from('Analyses')
         .insert([
             { 
                 ve_valeur: ve, 
                 multiple_valeur: multiple, 
-                label_entreprise: label 
+                user_id: sessionUtilisateur.user.id // Liaison avec le compte
             }
-        ])
+        ]);
 
-    if (error) {
-        console.error("Erreur de sauvegarde BDD :", error.message)
-    } else {
-        console.log("Analyse sauvegardée avec succès dans le Cloud !")
-    }
+    if (error) console.error("Erreur :", error.message);
+    else console.log("Sauvegardée sur votre compte !");
 }
+
+
+
+
+// 1. Inscription
+document.getElementById('btn-signup').addEventListener('click', async () => {
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    
+    if (error) alert(error.message);
+    else alert("Inscription réussie !");
+});
+
+// 2. Connexion
+document.getElementById('btn-login').addEventListener('click', async () => {
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    
+    if (error) alert(error.message);
+    else window.location.reload(); // On rafraîchit pour mettre à jour l'interface
+});
+
+
+document.getElementById('btn-logout').addEventListener('click', async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) console.error("Erreur déconnexion :", error.message);
+    else window.location.reload(); 
+});

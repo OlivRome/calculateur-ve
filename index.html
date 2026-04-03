@@ -21,6 +21,26 @@
 </header>
 
 <main>
+
+
+    <section id="auth-zone">
+    <div id="login-form">
+        <h3>Connexion / Inscription</h3>
+        <input type="email" id="auth-email" placeholder="votre@email.com">
+        <input type="password" id="auth-password" placeholder="Mot de passe">
+        <div style="margin-top: 10px;">
+            <button id="btn-signup">S'inscrire</button>
+            <button id="btn-login" style="background-color: #34495e;">Se connecter</button>
+        </div>
+    </div>
+    <div id="user-info" style="display: none;">
+        <p>Connecté en tant que : <strong id="user-email"></strong></p>
+        <button id="btn-logout" style="background-color: #e74c3c;">Déconnexion</button>
+    </div>
+    </section>
+
+
+
     <section>
         <h2>Saisie des données financières</h2>
         <form>
@@ -45,14 +65,15 @@
             </div>
 
             <br>
-            <button type="button">Calculer la $Ve$</button>
+            
+            <button type="button" id="btn-calculer">Calculer la $Ve$</button>
             <button type="button" id="btn-reset" style="background-color: #95a5a6; margin-top: 10px;">Réinitialiser</button>
         </form>
     </section>
 
    <section id="resultat-zone">
     <h3>Résultat :</h3>
-    <p>La $Ve$ est de : <strong>... €</strong></p>
+    <p>La $Ve$ est de : <strong id="ve-valeur-finale">... €</strong></p>
     <p>Multiple de valorisation : <span id="multiple-val">...</span> x</p>
     </section>
 
