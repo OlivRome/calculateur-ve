@@ -261,3 +261,65 @@ document.getElementById('btn-logout').addEventListener('click', async () => {
     if (error) console.error("Erreur déconnexion :", error.message);
     else window.location.reload(); 
 });
+
+
+
+async function recupererCapBoursiere() {
+    const ticker = document.getElementById('ticker').value.toUpperCase();
+    const apiKey = import.meta.env.VITE_FMP_API_KEY;
+    
+    if (!ticker) return;
+
+    try {
+        // Utilisation de l'endpoint "profile" qui a fonctionné dans votre test navigateur
+        
+        // On remplace le domaine externe par notre raccourci local /api-fmp
+        const url = `/api-fmp/api/v3/profile/${ticker}?apikey=${apiKey}`;
+        const response = await fetch(url);
+        
+        if (response.status === 403) {
+            console.error("Erreur 403 : Le plan gratuit bloque peut-être l'appel depuis localhost.");
+            return;
+        }
+
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+            // Extraction de la Capitalisation (marketCap)
+            const marketCap = data[0].marketCap;
+            document.getElementById('cap').value = marketCap;
+        }
+    } catch (error) {
+        console.error("Erreur technique :", error);
+    }
+}
+
+
+async function recupererCapAlphaVantage() {
+    const ticker = document.getElementById('ticker').value.toUpperCase();
+    const apiKey = import.meta.env.VITE_ALPHA_VANTAGE_KEY;
+    
+    if (!ticker) return;
+
+    try {
+        // On utilise l'endpoint "OVERVIEW" pour obtenir la Capitalisation
+        const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${ticker}&apikey=${apiKey}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // Alpha Vantage renvoie "MarketCapitalization" dans l'objet Overview
+        if (data && data.MarketCapitalization) {
+            const marketCap = parseFloat(data.MarketCapitalization);
+            document.getElementById('cap').value = marketCap;
+            console.log(`Succès Alpha Vantage pour ${ticker} : ${marketCap}`);
+        } else {
+            alert("Données non trouvées. Note : Pour Paris, essayez le format 'OR.PAR' ou testez avec 'AAPL'.");
+        }
+    } catch (error) {
+        console.error("Erreur Alpha Vantage :", error);
+    }
+}
+
+
+    // Liaison au bouton
+    document.getElementById('btn-fetch-api').addEventListener('click', recupererCapAlphaVantage);
